@@ -1,37 +1,27 @@
 const express = require('express');
-
-const notesData=require('./db/db.json')
-const PORT = 3001;
+const api = require('./routes/index.js');
+const path = require('path');
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.get('/api/notes', (req, res) => {
-    // Inform the client
-    res.json(`${req.method} get request`);
-    res.render('notes')
-  
-    // Log our request to the terminal
-    console.info(`${req.method} request received to get reviews`);
-  });
+// Middleware for parsing JSON and urlencoded form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', api);
 
-  app.post('/api/notes', (req, res) => {
-    // Inform the client that their POST request was received
-    res.json(`${req.method} request received to add a review`);
-    res.post('notes')
-  
-    // Log our request to the terminal
-    console.info(`${req.method} request received to add a review`);
-  });
+app.use(express.static('public'));
 
-  app.post('/api/notes', (req, res) => {
-    // Inform the client that their POST request was received
-    res.json(`${req.method} request received to add a review`);
-    res.delete('notes')
-  
-    // Log our request to the terminal
-    console.info(`${req.method} request received to add a review`);
-  });
+// GET Route for homepage
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+
+// GET Route for notes page
+app.get('/notes', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
 
   app.listen(PORT, () =>
-  console.log(`Express server listening on port ${PORT}!`)
+  console.log(`App listening at http://localhost:${PORT}`)
 );
