@@ -19,16 +19,34 @@ const writeToFile = (destination, content) =>
  *  @param {string} file The path to the file you want to save to.
  *  @returns {void} Nothing
  */
-const readAndAppend = (content, file) => {
-  fs.readFile(file, 'utf8', (err, data) => {
+const readAndAppend = (content, filePath) => {
+  fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       console.error(err);
     } else {
       const parsedData = JSON.parse(data);
       parsedData.push(content);
-      writeToFile(file, parsedData);
+      writeToFile(filePath, parsedData);
     }
   });
 };
 
-module.exports = { readFromFile, writeToFile, readAndAppend };
+const readAndDelete=(id,filePath)=>{
+  fs.readFile(filePath, 'utf8',(err,data)=>{
+  if(err){
+    console.error(err)
+  }else{
+  const parsedData=JSON.parse(data);
+  const newArray=parsedData.filter((note)=>{
+    if(note.id!==id){
+      return true//everything we keep is true
+    }else{
+      return false//everything deleted is false
+    }
+  })
+  writeToFile(filePath,newArray)
+  }
+})
+}
+
+module.exports = { readFromFile, writeToFile, readAndAppend, readAndDelete };
